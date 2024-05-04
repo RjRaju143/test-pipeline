@@ -7,6 +7,12 @@ pipeline {
       defaultContainer 'maven'  // define a default container if more than a few stages use it, will default to jnlp container
     }
   }
+  environment {
+    //DOCKER_REGISTRY = "docker_private_registry_url"
+    DOCKER_REGISTRY_CREDS = credentials('dockerhub_credentials')
+    //IMAGE_NAME = "capsgold-backend"
+    //GIT_COMMIT_ID = sh(returnStdout: true, script: 'git log -1 --pretty=format:%H | cut -c1-7').trim()
+  }
   stages {
     stage('Build') {
       steps {  // no container directive is needed as the maven container is the default
@@ -15,9 +21,10 @@ pipeline {
     }
     stage('Build Docker Image') {
       steps {
-        container('docker') {  
-          sh "docker build -t vividlukeloresch/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-          sh "docker push vividlukeloresch/promo-app:dev"        // which is just connecting to the host docker deaemon
+        container('docker') {
+          sh "docker login "
+          sh "docker build -t docker.cluster.absol.in/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+          sh "docker push docker.cluster.absol.in/promo-app:dev"        // which is just connecting to the host docker deaemon
         }
       }
     }
