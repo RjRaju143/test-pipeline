@@ -27,6 +27,7 @@ pipeline {
           sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin docker.cluster.absol.in'
           sh "docker build -t docker.cluster.absol.in/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
           sh "docker push docker.cluster.absol.in/promo-app:dev"        // which is just connecting to the host docker deaemon
+          sh "docker logout --all"        // logout
         }
       }
     }
