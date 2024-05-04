@@ -9,7 +9,8 @@ pipeline {
   }
   environment {
     //DOCKER_REGISTRY = "docker_private_registry_url"
-    DOCKER_REGISTRY_CREDS = credentials('dockerhub_credentials')
+    DOCKER_PASSWORD='Absolin@123$$'
+    DOCKER_USERNAME='docker'
     //IMAGE_NAME = "capsgold-backend"
     //GIT_COMMIT_ID = sh(returnStdout: true, script: 'git log -1 --pretty=format:%H | cut -c1-7').trim()
   }
@@ -22,7 +23,8 @@ pipeline {
     stage('Build Docker Image') {
       steps {
         container('docker') {
-          sh "docker login "
+          // sh "docker login 
+          sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
           sh "docker build -t docker.cluster.absol.in/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
           sh "docker push docker.cluster.absol.in/promo-app:dev"        // which is just connecting to the host docker deaemon
         }
